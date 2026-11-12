@@ -1,0 +1,13 @@
+{
+  "name": "weread-rea",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "node scripts/build-userscript.mjs",
+    "test": "node --test",
+    "check": "npm run build && npm test && node --check src/weread-shelf.user.js",
+    "preview": "node scripts/serve-userscript.mjs"
+  }
+}

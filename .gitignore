@@ -1,0 +1,15 @@
+# Local captures, screenshots, service state and experiments stay on this machine.
+analysis/*
+!analysis/iteration-*.md
+!analysis/rea-initial/
+analysis/rea-initial/*
+!analysis/rea-initial/FINDINGS.md
+
+src/weread-shelf.dev.user.js
+*.zip
+*.log
+node_modules/
+.env
+.env.*
+.DS_Store
+Thumbs.db
