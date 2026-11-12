@@ -1,5 +1,7 @@
 # 微信读书 · 清爽书架
 
+[![CI](https://github.com/xrt-wg/weread-clean-shelf/actions/workflows/ci.yml/badge.svg)](https://github.com/xrt-wg/weread-clean-shelf/actions/workflows/ci.yml)
+
 非官方 Tampermonkey 用户脚本，把微信读书网页版书架重排为「左侧分组 + 右侧纯封面」的阅读型界面。
 
 - 左侧分组列表、筛选，以及固定顶部的“未分组”入口。
@@ -12,6 +14,14 @@
 只调整页面呈现，**不修改原站分组、书籍归属或阅读权限**，也不上传书架或账号数据。
 
 > 本项目为个人维护的非官方工具，与微信读书 / 腾讯无关。原站接口或页面结构变化后，脚本可能失效。
+
+## 预览
+
+| 浅色 | 暗色 |
+| --- | --- |
+| ![浅色界面示意图](docs/preview-light.png) | ![暗色界面示意图](docs/preview-dark.png) |
+
+> 界面示意，使用示例数据，不含个人书架内容。
 
 ## 安装
 
@@ -98,7 +108,12 @@ npm run check  # 构建、测试、生成文件语法检查
 - `release`：已确认的稳定版本分支，也是 GitHub 默认分支和自动更新的来源。
 - `v1.0.0`：第一版稳定发布的附注 Tag。后续按 `v主版本.次版本.修订版本` 命名。
 
-日常在 `develop` 小步提交。用户确认发布后，在 `develop` 更新版本、运行检查并提交，将 `release` 快进到该提交，再添加对应附注 Tag。两个分支不得直接重写已发布历史。
+日常在 `develop` 小步提交。确认发布后，在 `develop` 更新版本、运行检查并提交，将 `release` 快进到该提交，再添加对应附注 Tag。两个分支不得直接重写已发布历史。
+
+推送 `v*` tag 后，GitHub Actions 会自动完成剩余发布步骤：
+
+- `CI`：push 到 `develop` / `release` 或提交 PR 时，构建、测试，并检查生成脚本是否已提交。
+- `Release`：校验 tag 与 `package.json` 版本一致，重新构建，并把 `weread-shelf.user.js` 上传到对应 Release。
 
 回退时从上一发布 Tag 取出正式脚本，全文覆盖已安装脚本即可，不必回退用户的本机偏好。
 

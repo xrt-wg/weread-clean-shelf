@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>微信读书 · 清爽书架 — 界面示意</title>
+<style>
+  :root{
+    --bg:#fff;--panel:#f7f9fb;--text:#262c35;--muted:#69717d;--faint:#89929f;
+    --line:#e8ecf1;--hover:#f1f4f8;--selected:#edf4ff;--accent:#226bce;
+  }
+  html[data-theme="dark"]{
+    --bg:#17191d;--panel:#202329;--text:#e6e8ed;--muted:#adb4c0;--faint:#929ba9;
+    --line:#30353e;--hover:#272c34;--selected:#253a56;--accent:#9bc7ff;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--text);
+    font-family:"PingFang SC","Microsoft YaHei",sans-serif;color-scheme:light}
+  html[data-theme="dark"]{color-scheme:dark}
+
+  .nav{position:fixed;inset:0 0 auto;height:64px;background:var(--bg);border-bottom:1px solid var(--line);z-index:5}
+  .nav-inner{display:grid;grid-template-columns:184px minmax(180px,1fr) auto auto 30px;
+    align-items:center;column-gap:32px;width:100%;max-width:1440px;height:64px;margin:0 auto;padding:0 32px}
+  .brand{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:600;white-space:nowrap}
+  .logo{display:grid;place-items:center;width:30px;height:30px;border-radius:8px;
+    background:linear-gradient(140deg,#3b8bff,#1e5fd0);color:#fff;font-size:11px;font-weight:700;letter-spacing:.5px}
+  .search{height:34px;border-radius:8px;background:var(--panel);color:var(--faint);
+    display:flex;align-items:center;padding:0 14px;font-size:13px}
+  .nav a{color:var(--muted);font-size:13px;text-decoration:none;white-space:nowrap}
+  .nav a:hover{color:var(--text)}
+  .avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(140deg,#2f6fe0,#173d8a);justify-self:end}
+
+  .shelf{display:grid;grid-template-columns:184px minmax(0,1fr);grid-template-rows:30px minmax(0,1fr);
+    gap:18px 32px;width:100%;max-width:1440px;height:100vh;margin:0 auto;padding:84px 32px 20px}
+  .side{grid-column:1;grid-row:1/span 2;min-width:0;padding-right:18px;border-right:1px solid var(--line)}
+  .side-title{display:flex;align-items:center;justify-content:space-between;margin:0 0 16px;
+    font-size:17px;font-weight:600;line-height:30px}
+  .side-title span{color:var(--faint);font-size:12px;font-weight:400}
+  .filter{height:34px;padding:0 10px;margin-bottom:14px;border:1px solid var(--line);border-radius:6px;
+    background:var(--panel);color:var(--faint);font-size:12px;display:flex;align-items:center}
+  .groups{display:flex;flex-direction:column;gap:3px;max-height:calc(100vh - 210px);overflow:hidden;padding-right:3px}
+  .group{position:relative;padding:7px 10px;border-radius:5px;color:var(--muted);font-size:13px;line-height:20px;
+    display:flex;align-items:center;justify-content:space-between;white-space:nowrap}
+  .group:first-child{position:sticky;top:0;margin-bottom:8px;background:var(--bg);box-shadow:0 6px 0 var(--bg)}
+  .group.active{background:var(--selected);color:var(--accent);font-weight:600}
+  .group:not(:first-child):hover{background:var(--hover);color:var(--text)}
+  .grip{width:8px;height:12px;opacity:.3;display:grid;grid-template-columns:repeat(2,2px);
+    grid-template-rows:repeat(3,2px);gap:2px}
+  .grip i{background:var(--faint);border-radius:50%}
+
+  .heading{grid-column:2;grid-row:1;display:flex;align-items:center;justify-content:space-between;gap:16px;min-width:0}
+  .heading-start,.heading-end{display:flex;align-items:center;gap:12px;min-width:0}
+  .heading-start{gap:9px}
+  .icon{display:grid;place-items:center;width:30px;height:30px;padding:0;border:1px solid var(--line);
+    border-radius:6px;background:var(--bg);color:var(--muted);font-size:16px}
+  .fold{width:26px;border:0;background:transparent;font-size:20px;line-height:1}
+  h1{margin:0;font-size:21px;font-weight:600;line-height:30px;white-space:nowrap}
+  .count{margin:0;color:var(--faint);font-size:12px;white-space:nowrap}
+
+  .view{grid-column:2;grid-row:2;height:100%;min-height:0;min-width:0;overflow:hidden}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(124px,1fr));gap:20px 18px;padding:0 5px 20px 0}
+  .book{position:relative;aspect-ratio:128/185;box-shadow:0 2px 8px rgb(25 35 50 / 7%);overflow:hidden;
+    display:grid;place-items:center;min-width:0}
+  html[data-theme="dark"] .book{box-shadow:0 2px 8px rgb(0 0 0 / 35%)}
+  .book .title{font-family:"Songti SC","SimSun",serif;font-weight:600;letter-spacing:.12em;text-align:center;z-index:1}
+  .book .vertical{writing-mode:vertical-rl;letter-spacing:.28em}
+  .book .en{font-family:Georgia,serif;font-size:9px;letter-spacing:.22em;opacity:.72;text-transform:uppercase}
+  .book::before,.book::after{content:"";position:absolute;pointer-events:none}
+
+  .b1{background:linear-gradient(155deg,#16243d,#2c4266);color:#f3ecdc}
+  .b1::before{width:52%;aspect-ratio:1;border:1px solid #f3ecdc55;border-radius:50%;right:-18%;top:14%}
+  .b2{background:linear-gradient(160deg,#f4efe2,#e8dfc8);color:#2c3b2f}
+  .b2::before{inset:auto 12% 12% 12%;height:1px;background:#7e9a7355;box-shadow:0 -26px #7e9a7355,0 -52px #7e9a7355}
+  .b3{background:linear-gradient(150deg,#1c4f9c,#2f7ad6);color:#fff}
+  .b3::before{width:58%;aspect-ratio:1;border:1px solid #ffffff66;border-radius:50%;left:21%;top:18%}
+  .b3::after{width:34%;aspect-ratio:1;border:1px solid #ffffff44;border-radius:50%;left:33%;top:30%}
+  .b4{background:linear-gradient(160deg,#17181c,#3a2a22);color:#ffd9a0}
+  .b4::before{width:70%;height:1px;background:#ffb85a88;bottom:28%;left:15%;box-shadow:0 -2px #ffb85a44,0 2px #ffb85a44}
+  .b5{background:linear-gradient(160deg,#7d9179,#5d735c);color:#f7f5ec}
+  .b5::before{width:1px;height:62%;background:#f7f5ec66;left:22%;top:19%}
+  .b6{background:linear-gradient(160deg,#f2c94c,#e9b62c);color:#22201a}
+  .b6::before{width:54%;aspect-ratio:1;border:2px solid #22201a;border-radius:50%;right:-14%;bottom:-10%}
+  .b7{background:linear-gradient(160deg,#f6f2ea,#efe8da);color:#9c2b2b}
+  .b7::before{inset:16% 18%;border:1px solid #9c2b2b55}
+  .b8{background:linear-gradient(150deg,#e8795f,#c94f3d);color:#fff5ec}
+  .b8::before{width:36%;aspect-ratio:1;border-radius:50%;background:#fff2;left:10%;top:12%}
+  .b9{background:radial-gradient(circle at 70% 24%,#3b4a77 0 2px,transparent 3px),
+      radial-gradient(circle at 28% 38%,#55648f 0 1px,transparent 2px),
+      radial-gradient(circle at 58% 68%,#46557f 0 1.5px,transparent 2.5px),
+      linear-gradient(160deg,#0d1020,#1a2140);color:#eef1ff}
+  .b10{background:linear-gradient(160deg,#a9b38a,#7f8b62);color:#2a2f20}
+  .b10::before{width:58%;height:58%;border:1px solid #2a2f2055;border-radius:50% 50% 48% 52%;left:21%;top:21%}
+  .b11{background:linear-gradient(160deg,#cfe3f2,#a9c8e0);color:#20415c}
+  .b11::before{width:80%;height:1px;background:#20415c44;top:36%;left:10%;transform:rotate(-8deg);
+    box-shadow:0 16px #20415c33,0 32px #20415c22}
+  .b12{background:linear-gradient(160deg,#e6d8c3,#d3bfa3);color:#5a3e2a}
+  .b12::before{inset:10%;border:1px dashed #5a3e2a44}
+  .b13{background:linear-gradient(160deg,#2f7b78,#1d5957);color:#eaf6f2}
+  .b13::before{width:70%;aspect-ratio:1;border:1px solid #eaf6f255;border-radius:50%;left:15%;top:22%}
+  .b14{background:linear-gradient(160deg,#362d56,#241d3d);color:#e8e1ff}
+  .b14::before{width:3px;height:3px;border-radius:50%;background:#c9b8ff;left:30%;top:30%;
+    box-shadow:22px 8px #c9b8ff,44px -6px #c9b8ff88,12px 40px #c9b8ffaa,52px 52px #c9b8ff77}
+  .b15{background:linear-gradient(160deg,#1b2f4a,#0f1c2e);color:#dfe8f5}
+  .b15::before{width:1px;height:54%;background:#dfe8f533;left:50%;top:8%;transform:rotate(24deg)}
+  .b16{background:linear-gradient(160deg,#111,#333);color:#f2f2f2}
+  .b16::before{width:44%;aspect-ratio:1;background:#f2f2f2;border-radius:50% 50% 0 50%;left:28%;bottom:16%}
+  .b17{background:linear-gradient(160deg,#f3d7d2,#e7bfb8);color:#7a3b35}
+  .b17::before{width:62%;aspect-ratio:1;border:1px solid #7a3b3555;border-radius:50%;left:19%;top:24%}
+  .b18{background:linear-gradient(160deg,#8d9a8f,#6c7a70);color:#f1f3ee}
+  .b18::before{width:70%;height:1px;background:#f1f3ee66;left:15%;bottom:30%;transform:rotate(6deg)}
+</style>
+<body>
+  <header class="nav">
+    <div class="nav-inner">
+      <div class="brand"><div class="logo">we</div><span>微信读书</span></div>
+      <div class="search">搜索</div>
+      <a href="#">首页</a>
+      <a href="#">传书到手机</a>
+      <div class="avatar"></div>
+    </div>
+  </header>
+
+  <main class="shelf">
+    <aside class="side">
+      <div class="side-title">书架 <span>9 个分组</span></div>
+      <div class="filter">筛选分组</div>
+      <div class="groups">
+        <div class="group active">未分组</div>
+        <div class="group">正在阅读 <span class="grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+        <div class="group">技术书 <span class="grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+        <div class="group">文学 <span class="grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+        <div class="group">历史 <span class="grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+        <div class="group">设计 <span class="grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+        <div class="group">科普 <span class="grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+        <div class="group">待读 <span class="grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+        <div class="group">睡前 <span class="grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+        <div class="group">收藏 <span class="grip"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      </div>
+    </aside>
+
+    <header class="heading">
+      <div class="heading-start"><button class="icon fold">‹</button><h1>未分组</h1></div>
+      <div class="heading-end"><p class="count">共 54 本 · 3 项暂未返回</p><button class="icon theme">☾</button></div>
+    </header>
+
+    <section class="view"><div class="grid" id="grid"></div></section>
+  </main>
+
+<script>
+  const books = [
+    {t:'长夜将尽', c:'b1', v:true},
+    {t:'山与海', c:'b2'},
+    {t:'时间的形状', c:'b3'},
+    {t:'城市微光', c:'b4'},
+    {t:'静默的河', c:'b5', v:true},
+    {t:'万物有灵', c:'b6'},
+    {t:'纸上远方', c:'b7'},
+    {t:'夏日回声', c:'b8'},
+    {t:'深空来信', c:'b9'},
+    {t:'缓慢生长', c:'b10'},
+    {t:'风的方向', c:'b11'},
+    {t:'旧日手记', c:'b12'},
+    {t:'岛屿之外', c:'b13'},
+    {t:'微小的宇宙', c:'b14'},
+    {t:'夜航手记', c:'b15'},
+    {t:'光的背面', c:'b16'},
+    {t:'无声之夏', c:'b17'},
+    {t:'沿途', c:'b18', v:true}
+  ];
+  const theme = new URL(location.href).searchParams.get('theme');
+  if (theme === 'dark') document.documentElement.dataset.theme = 'dark';
+  const grid = document.getElementById('grid');
+  for (const book of books) {
+    const card = document.createElement('div');
+    card.className = 'book ' + book.c;
+    const title = document.createElement('span');
+    title.className = 'title' + (book.v ? ' vertical' : '');
+    title.textContent = book.t;
+    card.append(title);
+    grid.append(card);
+  }
+</script>
+</body>
+</html>
