@@ -1,8 +1,14 @@
 // ==UserScript==
 // @name         微信读书 · 清爽书架
-// @namespace    weread-rea.local
+// @namespace    https://github.com/xrt-wg/weread-clean-shelf
 // @version      __WR_REA_VERSION__
-// @description  可排序分组、纯封面书架、主题切换；独立运行，手动覆盖更新。
+// @description  可排序分组、纯封面书架、主题切换；独立运行，自动更新。
+// @author       xrt-wg
+// @license      MIT
+// @homepageURL  https://github.com/xrt-wg/weread-clean-shelf
+// @supportURL   https://github.com/xrt-wg/weread-clean-shelf/issues
+// @updateURL    https://raw.githubusercontent.com/xrt-wg/weread-clean-shelf/release/src/weread-shelf.user.js
+// @downloadURL  https://raw.githubusercontent.com/xrt-wg/weread-clean-shelf/release/src/weread-shelf.user.js
 // @match        https://weread.qq.com/*
 // @run-at       document-start
 // @sandbox      DOM
